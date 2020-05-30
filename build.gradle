@@ -1,0 +1,112 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'groovy'
+	id 'maven'
+	id "org.liquibase.gradle" version "2.0.2"
+}
+
+group = 'com.xcodeassociated'
+version = '0.0.1-SNAPSHOT'
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+}
+
+ext {
+	set('springCloudVersion', "Hoxton.SR1")
+	queryDslVersion = '4.2.2'
+}
+
+dependencies {
+	compile 'com.xcodeassociated:commons:0.0.1-SNAPSHOT'
+	compile 'com.xcodeassociated:events:0.0.1-SNAPSHOT'
+
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation "com.squareup.okhttp3:logging-interceptor"
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.liquibase:liquibase-core'
+	liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:3.8'
+	liquibaseRuntime sourceSets.main.runtimeClasspath
+	liquibaseRuntime sourceSets.main.output
+
+	compile "com.querydsl:querydsl-core:${queryDslVersion}"
+	compile "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+	annotationProcessor 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
+	annotationProcessor	'javax.annotation:javax.annotation-api:1.3.2'
+
+	compile "org.springdoc:springdoc-openapi-ui:1.2.29"
+
+	testCompile group: 'com.h2database', name: 'h2', version: '1.3.148'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	compile "org.codehaus.groovy:groovy-all:3.0.2"
+	testCompile platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5")
+	testCompile "org.spockframework:spock-core:2.0-M2-groovy-2.5"
+	testCompile "org.spockframework:spock-spring:2.0-M2-groovy-2.5"
+	testCompile "org.spockframework:spock-junit4:2.0-M2-groovy-2.5"
+	testCompile "cglib:cglib-nodep:3.3.0"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+def props = new Properties()
+file("src/main/resources/liquibase.properties").withInputStream { props.load(it) }
+
+diff.dependsOn assemble
+diffChangeLog.dependsOn assemble
+
+liquibase {
+	activities {
+		main {
+			changeLogFile props.getProperty("liquibase.changelog.main")
+			referenceUrl props.getProperty("liquibase.changelog.referenceUrl")
+			url props.getProperty("liquibase.datasource.url")
+			username props.getProperty("liquibase.datasource.username")
+			password props.getProperty("liquibase.datasource.password")
+			driver 'org.postgresql.Driver'
+			referenceDriver "liquibase.ext.hibernate.database.connection.HibernateDriver"
+		}
+	}
+}
