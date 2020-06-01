@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserEventService implements UserEventServiceInterface {
 
+    private UserEventConverter eventConverter;
+
     @Override
     public void handleKafkaEvent(KafkaEvent event) {
         log.info("Processing KafkaEvent: {}", event);

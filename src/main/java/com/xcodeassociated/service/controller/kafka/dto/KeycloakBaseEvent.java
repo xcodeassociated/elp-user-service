@@ -16,7 +16,14 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility= JsonAutoDetect.Visibility.ANY)
 public class KeycloakBaseEvent {
-    protected KafkaKeycloakMessageType type;
+    @JsonProperty("time")
+    protected long time;
+
+    @JsonProperty("realmId")
+    protected String realmId;
+
+    @JsonProperty("type")
+    protected KeycloakEventMessageType type;
 
     @JsonIgnore
     protected Map<String, Object> unknownFields = new HashMap<>();

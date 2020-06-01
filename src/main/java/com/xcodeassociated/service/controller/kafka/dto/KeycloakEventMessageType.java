@@ -10,35 +10,37 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// keycloak docs: https://github.com/keycloak/keycloak/blob/master/server-spi-private/src/main/java/org/keycloak/events/EventType.java
+
 @Getter
-public enum KafkaKeycloakMessageType {
-    // keycloak events
+public enum KeycloakEventMessageType {
     @JsonProperty("REGISTER")
     REGISTER("REGISTER"),
+
     @JsonProperty("LOGIN")
     LOGIN("LOGIN"),
+
     @JsonProperty("LOGOUT")
     LOGOUT("LOGOUT"),
-    @JsonProperty("CODE_TO_TOKEN")
-    CODE_TO_TOKEN("CODE_TO_TOKEN"),
-    // unknown
+
+    // unknown type for any other events
     @JsonProperty("UNKNOWN")
     UNKNOWN("UNKNOWN");
 
-    private static Map<String, KafkaKeycloakMessageType> FORMAT_MAP = Stream
-            .of(KafkaKeycloakMessageType.values())
-            .collect(Collectors.toMap(s -> s.formatted, Function.identity()));
-
     private final String formatted;
 
-    KafkaKeycloakMessageType(String formatted) {
+    KeycloakEventMessageType(String formatted) {
         this.formatted = formatted;
     }
 
+    private static Map<String, KeycloakEventMessageType> FORMAT_MAP = Stream
+            .of(KeycloakEventMessageType.values())
+            .collect(Collectors.toMap(s -> s.formatted, Function.identity()));
+
     @JsonCreator
-    public static KafkaKeycloakMessageType fromString(String string) {
+    public static KeycloakEventMessageType fromString(String string) {
         return Optional
                 .ofNullable(FORMAT_MAP.get(string))
-                .orElseGet(() -> KafkaKeycloakMessageType.UNKNOWN);
+                .orElseGet(() -> KeycloakEventMessageType.UNKNOWN);
     }
 }

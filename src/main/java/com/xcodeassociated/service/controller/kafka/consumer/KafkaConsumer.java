@@ -1,5 +1,6 @@
 package com.xcodeassociated.service.controller.kafka.consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xcodeassociated.events.model.KafkaEvent;
 import com.xcodeassociated.service.controller.kafka.KafkaConsumerInterface;
 import com.xcodeassociated.service.controller.kafka.dto.KeycloakAdminEvent;
@@ -39,7 +40,7 @@ public class KafkaConsumer implements KafkaConsumerInterface {
     )
     public void onKeycloakEvent(@Valid @Payload KeycloakBaseEvent event,
                         @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition,
-                        @Header(KafkaHeaders.OFFSET) Integer offset) {
+                        @Header(KafkaHeaders.OFFSET) Integer offset) throws JsonProcessingException {
         log.info("Received form partition: {}, offset: {},  event: {}", partition, offset, event);
 
         if (Objects.isNull(event.getType())) {
