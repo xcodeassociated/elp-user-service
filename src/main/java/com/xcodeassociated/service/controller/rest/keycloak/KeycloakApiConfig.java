@@ -24,7 +24,7 @@ public class KeycloakApiConfig {
     }
 
     @Bean
-    public KeycloakApi externalServiceApiBuilder(@Value("${keycloak.api.url}") String url,
+    public KeycloakApi keycloakApiBuilder(@Value("${external.keycloak.api.url}") String url,
                                                  ObjectMapper mapper,
                                                  OAuth2TokenAuthenticator authenticator,
                                                  AuthorizationInterceptor authorizationInterceptor,
