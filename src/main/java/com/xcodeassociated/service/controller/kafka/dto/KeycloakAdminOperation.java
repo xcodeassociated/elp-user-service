@@ -25,6 +25,10 @@ public enum KeycloakAdminOperation {
             .of(KeycloakAdminOperation.values())
             .collect(Collectors.toMap(s -> s.formatted, Function.identity()));
 
+    public String getFormatted() {
+        return this.formatted;
+    }
+
     @JsonCreator
     public static KeycloakAdminOperation fromString(String string) {
         return Optional

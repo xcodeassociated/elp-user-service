@@ -14,4 +14,5 @@ public class BaseUserEvent {
     private String userId;
     private String realmId;
     private String error;
+    private EventType eventType;
 }
