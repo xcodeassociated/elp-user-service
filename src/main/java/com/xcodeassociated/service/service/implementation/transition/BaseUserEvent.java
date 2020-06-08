@@ -1,5 +1,6 @@
 package com.xcodeassociated.service.service.implementation.transition;
 
+import com.xcodeassociated.service.model.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

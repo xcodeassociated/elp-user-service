@@ -1,6 +1,7 @@
 package com.xcodeassociated.service.model;
 
 import com.xcodeassociated.service.model.dto.UserDto;
+import com.xcodeassociated.service.model.dto.UserFullDto;
 import com.xcodeassociated.service.model.helpers.CollectionsByValueComparator;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -52,6 +53,10 @@ public class User extends ComparableBaseEntity<User> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private Set<Contact> contacts = new HashSet<>();
 
+    @BatchSize(size = 10)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private Set<History> history = new HashSet<>();
+
     @Override
     public boolean compare(User other) {
         return StringUtils.equals(this.firstName, other.getFirstName())
@@ -60,7 +65,8 @@ public class User extends ComparableBaseEntity<User> {
                 && StringUtils.equals(this.lastName, other.getLastName())
                 && ObjectUtils.compare(this.createdTimestamp, other.getCreatedTimestamp()) == 0
                 && ObjectUtils.compare(this.enabled, other.getEnabled()) == 0
-                && CollectionsByValueComparator.areCollectionsSame(this.contacts, other.getContacts());
+                && CollectionsByValueComparator.areCollectionsSame(this.contacts, other.getContacts())
+                && CollectionsByValueComparator.areCollectionsSame(this.history, other.getHistory());
     }
 
     public UserDto toDto() {
@@ -78,6 +84,28 @@ public class User extends ComparableBaseEntity<User> {
                 .enabled(this.enabled)
                 .contacts(this.contacts.stream()
                         .map(Contact::toDto)
+                        .collect(Collectors.toSet()))
+                .build();
+    }
+
+    public UserFullDto toFullDto() {
+        return UserFullDto.builder()
+                .id(getId())
+                .createdBy(getCreatedBy())
+                .createdDate(getCreatedDate())
+                .modifiedBy(getModifiedBy())
+                .modifiedDate(getModifiedDate())
+                .username(this.username)
+                .authId(this.authId)
+                .firstName(this.firstName)
+                .lastName(this.lastName)
+                .createdTimestamp(this.createdTimestamp)
+                .enabled(this.enabled)
+                .contacts(this.contacts.stream()
+                        .map(Contact::toDto)
+                        .collect(Collectors.toSet()))
+                .history(this.history.stream()
+                        .map(History::toDto)
                         .collect(Collectors.toSet()))
                 .build();
     }

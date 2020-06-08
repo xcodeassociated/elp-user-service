@@ -5,6 +5,7 @@ import com.xcodeassociated.service.controller.kafka.dto.KeycloakBaseEvent;
 import com.xcodeassociated.service.controller.kafka.dto.KeycloakEvent;
 import com.xcodeassociated.service.exception.ServiceException;
 import com.xcodeassociated.service.exception.codes.ErrorCode;
+import com.xcodeassociated.service.model.EventType;
 import com.xcodeassociated.service.service.implementation.transition.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

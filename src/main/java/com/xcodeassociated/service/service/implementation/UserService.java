@@ -9,7 +9,6 @@ import com.xcodeassociated.service.model.Contact;
 import com.xcodeassociated.service.model.User;
 import com.xcodeassociated.service.model.dto.ContactDto;
 import com.xcodeassociated.service.model.dto.UserDto;
-import com.xcodeassociated.service.model.dto.simple.UserSimpleEmailsDto;
 import com.xcodeassociated.service.repository.UserRepository;
 import com.xcodeassociated.service.service.UserServiceCommand;
 import com.xcodeassociated.service.service.UserServiceQuery;
@@ -23,8 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -23,9 +23,11 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
 
     private final UserEventConverter eventConverter;
     private final KeycloakApi keycloakApi;
+    private final UserService userService;
 
-    public UserEventService(KeycloakApi keycloakApi) {
+    public UserEventService(KeycloakApi keycloakApi, UserService userService) {
         this.keycloakApi = keycloakApi;
+        this.userService = userService;
         this.eventConverter = new UserEventConverter(this);
     }
 

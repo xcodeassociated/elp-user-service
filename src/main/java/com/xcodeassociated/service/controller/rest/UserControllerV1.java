@@ -5,7 +5,6 @@ import com.xcodeassociated.commons.paging.JsonViewAwarePage;
 import com.xcodeassociated.commons.paging.SortDirection;
 import com.xcodeassociated.service.controller.rest.dto.UserSearchDto;
 import com.xcodeassociated.service.model.dto.UserDto;
-import com.xcodeassociated.service.model.dto.simple.UserSimpleEmailsDto;
 import com.xcodeassociated.service.service.UserServiceCommand;
 import com.xcodeassociated.service.service.UserServiceQuery;
 import lombok.AllArgsConstructor;
@@ -15,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 @Slf4j
 @RestController
