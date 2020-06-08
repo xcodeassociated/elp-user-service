@@ -41,21 +41,6 @@ public class UserControllerV1 {
         return new JsonViewAwarePage<>(userServiceQuery.getAllUsers(pageable));
     }
 
-    @GetMapping("/simple/emails/paged")
-    @PreAuthorize("hasRole('backend_service')")
-    public JsonViewAwarePage<UserSimpleEmailsDto> getAllUsersEmailsPaged(@RequestParam(name = "ids") Set<Long> ids,
-                                                       @RequestParam(defaultValue = "1") int page,
-                                                       @RequestParam(defaultValue = "10") int size,
-                                                       @RequestParam(name = "sort_by", defaultValue = "id") String sortBy,
-                                                       @RequestParam(name = "sort_how", defaultValue = "asc") SortDirection sortDirection) {
-
-        log.info("Processing `getAllUsersEmailsPaged` request in UserControllerV1, ids: {}, page: {}, size: {}, sortBy: {}, sortDirection: {}",
-                ids, page, size, sortBy, sortDirection);
-
-        Pageable pageable = new CustomPageRequest(page, size, sortDirection, sortBy).toPageable();
-        return new JsonViewAwarePage<>(userServiceQuery.getAllUsersEmailsById(ids, pageable));
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('backend_service')")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {

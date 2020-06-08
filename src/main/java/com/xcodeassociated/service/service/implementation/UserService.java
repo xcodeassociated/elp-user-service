@@ -153,19 +153,6 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
     }
 
     @Override
-    public Page<UserSimpleEmailsDto> getAllUsersEmailsById(Set<Long> ids, Pageable pageable) {
-        return this.userRepository
-                .getAllClientsEmailsPaged(ids, pageable)
-                .map(e -> new UserSimpleEmailsDto()
-                        .toBuilder()
-                        .firstName(e.getFirstName())
-                        .lastName(e.getLastName())
-                        .emails(new HashSet<>(Arrays.asList(e.getEmails().split("\\s*,\\s*"))))
-                        .build()
-                );
-    }
-
-    @Override
     public void deleteUser(Long id) {
         log.info("Deleting user by id: {}", id);
 

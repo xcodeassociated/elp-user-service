@@ -12,5 +12,4 @@ public interface UserServiceQuery {
     UserDto getUserById(Long id);
     UserDto getUserByEmail(String emailQuery);
     UserDto getUserByFirstNameAndLastNameAndNullableEmail(String firstName, String lastName, String email);
-    Page<UserSimpleEmailsDto> getAllUsersEmailsById(Set<Long> ids, Pageable pageable);
 }
