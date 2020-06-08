@@ -18,13 +18,20 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Audited(withModifiedFlag = true)
 @ToString(callSuper = true)
+@Table(name = "contact",
+    indexes = {
+        @Index(name = "EMAIL_INDEX", columnList = "email"),
+        @Index(name = "USER_ID_INDEX", columnList = "user_id")
+    }
+)
 public class Contact extends ComparableBaseEntity<Contact> {
 
     @NotNull
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    private Boolean primaryEmail;
+    @Column(name = "verified", nullable = false)
+    private Boolean verified;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -33,7 +40,7 @@ public class Contact extends ComparableBaseEntity<Contact> {
     @Override
     public boolean compare(Contact other) {
         return StringUtils.equals(this.email, other.getEmail())
-                && ObjectUtils.compare(this.primaryEmail, other.getPrimaryEmail()) == 0
+                && ObjectUtils.compare(this.verified, other.getVerified()) == 0
                 && ObjectUtils.compare(this.user.getId(), other.getUser().getId()) == 0;
     }
 
@@ -45,7 +52,7 @@ public class Contact extends ComparableBaseEntity<Contact> {
                 .modifiedBy(getModifiedBy())
                 .modifiedDate(getModifiedDate())
                 .email(this.email)
-                .primaryEmail(this.primaryEmail)
+                .verified(this.verified)
                 .build();
     }
 }

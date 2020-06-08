@@ -1,0 +1,376 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1591643400686-1
+      author: hamashy (generated)
+      changes:
+        - createSequence:
+            incrementBy: 1
+            sequenceName: hibernate_sequence
+            startValue: 1
+  - changeSet:
+      id: 1591643400686-2
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: contactPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: verified
+                  type: BOOLEAN
+              - column:
+                  name: user_id
+                  type: BIGINT
+            tableName: contact
+  - changeSet:
+      id: 1591643400686-3
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: contact_audPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: contact_audPK
+                  name: rev
+                  type: INTEGER
+              - column:
+                  name: revtype
+                  type: SMALLINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: created_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: modified_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  name: uuid_mod
+                  type: BOOLEAN
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: email_mod
+                  type: BOOLEAN
+              - column:
+                  name: verified
+                  type: BOOLEAN
+              - column:
+                  name: verified_mod
+                  type: BOOLEAN
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: user_mod
+                  type: BOOLEAN
+            tableName: contact_aud
+  - changeSet:
+      id: 1591643400686-4
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: rev_entityPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: timestamp
+                  type: BIGINT
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+            tableName: rev_entity
+  - changeSet:
+      id: 1591643400686-5
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: userPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: auth_id
+                  type: VARCHAR(255)
+              - column:
+                  name: created_timestamp
+                  type: BIGINT
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+            tableName: user
+  - changeSet:
+      id: 1591643400686-6
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_audPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_audPK
+                  name: rev
+                  type: INTEGER
+              - column:
+                  name: revtype
+                  type: SMALLINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: created_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: modified_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  name: uuid_mod
+                  type: BOOLEAN
+              - column:
+                  name: auth_id
+                  type: VARCHAR(255)
+              - column:
+                  name: auth_id_mod
+                  type: BOOLEAN
+              - column:
+                  name: created_timestamp
+                  type: BIGINT
+              - column:
+                  name: created_timestamp_mod
+                  type: BOOLEAN
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+              - column:
+                  name: enabled_mod
+                  type: BOOLEAN
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: first_name_mod
+                  type: BOOLEAN
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name_mod
+                  type: BOOLEAN
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: username_mod
+                  type: BOOLEAN
+              - column:
+                  name: contacts_mod
+                  type: BOOLEAN
+            tableName: user_aud
+  - changeSet:
+      id: 1591643400686-7
+      author: hamashy (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: UC_CONTACTEMAIL_COL
+            tableName: contact
+  - changeSet:
+      id: 1591643400686-8
+      author: hamashy (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: auth_id
+            constraintName: UC_USERAUTH_ID_COL
+            tableName: user
+  - changeSet:
+      id: 1591643400686-9
+      author: hamashy (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: username
+            indexName: USERNAME_INDEX
+            tableName: user
+  - changeSet:
+      id: 1591643400686-10
+      author: hamashy (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: user_id
+            indexName: USER_ID_INDEX
+            tableName: contact
+  - changeSet:
+      id: 1591643400686-11
+      author: hamashy (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: contact
+            constraintName: FKe07k4jcfdophemi6j1lt84b61
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: user
+            validate: true
+  - changeSet:
+      id: 1591643400686-12
+      author: hamashy (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: rev
+            baseTableName: user_aud
+            constraintName: FKn4bly3wenp6tb3f46qa8odcxp
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: rev_entity
+            validate: true
+  - changeSet:
+      id: 1591643400686-13
+      author: hamashy (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: rev
+            baseTableName: contact_aud
+            constraintName: FKta2sv9mp150pv7efgog3y2qds
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: rev_entity
+            validate: true
+

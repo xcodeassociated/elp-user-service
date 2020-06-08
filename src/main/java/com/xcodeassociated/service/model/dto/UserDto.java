@@ -13,7 +13,11 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 public class UserDto extends BaseEntityDto {
     private Long id;
+    private String authId;
+    private String username;
     private String firstName;
     private String lastName;
+    private Long createdTimestamp;
+    private Boolean enabled;
     private Set<ContactDto> contacts;
 }

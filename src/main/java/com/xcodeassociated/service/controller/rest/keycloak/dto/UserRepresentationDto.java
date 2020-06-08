@@ -3,6 +3,10 @@ package com.xcodeassociated.service.controller.rest.keycloak.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @Data
 public class UserRepresentationDto {
     @JsonProperty("id")
@@ -28,4 +32,20 @@ public class UserRepresentationDto {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("totp")
+    Boolean totp;
+
+    @JsonProperty("notBefore")
+    Integer notBefore;
+
+    @JsonProperty("disableableCredentialTypes")
+    Set<String> disableableCredentialTypes;
+
+    @JsonProperty("requiredActions")
+    List<String> requiredActions;
+
+    @JsonProperty("access")
+    Map<String, Boolean> access;
+
 }

@@ -11,5 +11,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class ContactDto extends BaseEntityDto {
     private String email;
-    private Boolean primaryEmail;
+    private Boolean verified;
 }

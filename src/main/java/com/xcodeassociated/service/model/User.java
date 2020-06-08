@@ -4,6 +4,7 @@ import com.xcodeassociated.service.model.dto.UserDto;
 import com.xcodeassociated.service.model.helpers.CollectionsByValueComparator;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.envers.Audited;
@@ -18,24 +19,34 @@ import java.util.stream.Collectors;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Audited(withModifiedFlag = true)
 @ToString(callSuper = true)
-@Table(name = "user_table",
+@Table(name = "user",
     indexes = {
-        @Index(name = "FIRST_NAME_INDEX", columnList = "first_name"),
-        @Index(name = "LAST_NAME_INDEX", columnList = "last_name")
+        @Index(name = "AUTH_ID_INDEX", columnList = "auth_id"),
+        @Index(name = "USERNAME_INDEX", columnList = "username")
     }
 )
 public class User extends ComparableBaseEntity<User> {
+
+    @Column(name = "auth_id", nullable = false, unique = true)
+    private String authId;
+
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "created_timestamp")
+    private Long createdTimestamp;
+
+    @Column(name = "enabled")
+    private Boolean enabled;
 
     @BatchSize(size = 10)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
@@ -44,7 +55,11 @@ public class User extends ComparableBaseEntity<User> {
     @Override
     public boolean compare(User other) {
         return StringUtils.equals(this.firstName, other.getFirstName())
+                && StringUtils.equals(this.authId, other.getAuthId())
+                && StringUtils.equals(this.username, other.getUsername())
                 && StringUtils.equals(this.lastName, other.getLastName())
+                && ObjectUtils.compare(this.createdTimestamp, other.getCreatedTimestamp()) == 0
+                && ObjectUtils.compare(this.enabled, other.getEnabled()) == 0
                 && CollectionsByValueComparator.areCollectionsSame(this.contacts, other.getContacts());
     }
 
@@ -55,8 +70,12 @@ public class User extends ComparableBaseEntity<User> {
                 .createdDate(getCreatedDate())
                 .modifiedBy(getModifiedBy())
                 .modifiedDate(getModifiedDate())
+                .username(this.username)
+                .authId(this.authId)
                 .firstName(this.firstName)
                 .lastName(this.lastName)
+                .createdTimestamp(this.createdTimestamp)
+                .enabled(this.enabled)
                 .contacts(this.contacts.stream()
                         .map(Contact::toDto)
                         .collect(Collectors.toSet()))

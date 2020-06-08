@@ -184,7 +184,7 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
         return new Contact()
                 .toBuilder()
                 .email(contactDto.getEmail())
-                .primaryEmail(contactDto.getPrimaryEmail())
+                .verified(contactDto.getVerified())
                 .build();
     }
 }
