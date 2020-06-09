@@ -4,7 +4,12 @@ import com.xcodeassociated.commons.paging.CustomPageRequest;
 import com.xcodeassociated.commons.paging.JsonViewAwarePage;
 import com.xcodeassociated.commons.paging.SortDirection;
 import com.xcodeassociated.service.controller.rest.dto.UserSearchDto;
+import com.xcodeassociated.service.controller.rest.keycloak.dto.UserRepresentationDto;
+import com.xcodeassociated.service.exception.ServiceException;
+import com.xcodeassociated.service.exception.codes.ErrorCode;
+import com.xcodeassociated.service.model.User;
 import com.xcodeassociated.service.model.dto.UserDto;
+import com.xcodeassociated.service.model.dto.UserFullDto;
 import com.xcodeassociated.service.service.UserServiceCommand;
 import com.xcodeassociated.service.service.UserServiceQuery;
 import lombok.AllArgsConstructor;
@@ -46,6 +51,22 @@ public class UserControllerV1 {
         return new ResponseEntity<>(this.userServiceQuery.getUserById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/full")
+    @PreAuthorize("hasRole('backend_service')")
+    public ResponseEntity<UserFullDto> getFullUser(@PathVariable Long id) {
+        log.info("Processing `getFullUser` request in UserControllerV1, id: {}", id);
+
+        return new ResponseEntity<>(this.userServiceQuery.getFullUserById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/by/authId/{authId}")
+    @PreAuthorize("hasRole('backend_service')")
+    public ResponseEntity<UserDto> getUserByAuthId(@PathVariable String authId) {
+        log.info("Processing `getUserByAuthId` request in UserControllerV1, authId: {}", authId);
+
+        return new ResponseEntity<>(this.userServiceQuery.getUserByAuthId(authId), HttpStatus.OK);
+    }
+
     @GetMapping("/by/email/{value}")
     @PreAuthorize("hasRole('backend_service')")
     public ResponseEntity<UserDto> getUserByEmail(@PathVariable String value) {
@@ -65,26 +86,29 @@ public class UserControllerV1 {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('backend_service')")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserRepresentationDto userDto) {
         log.info("Processing `createUser` request in UserControllerV1, userDto: {}", userDto);
 
-        return new ResponseEntity<>(this.userServiceCommand.createUser(userDto), HttpStatus.OK);
+        return new ResponseEntity<>(this.userServiceCommand.createUser(userDto)
+                .map(User::toDto)
+                .orElseThrow(() -> new ServiceException(ErrorCode.S000, "User not created")), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('backend_service')")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserRepresentationDto userDto) {
         log.info("Processing `updateUser` request in UserControllerV1, userDto: {}", userDto);
 
-        return new ResponseEntity<>(this.userServiceCommand.updateUser(userDto), HttpStatus.OK);
-    }
+        return new ResponseEntity<>(this.userServiceCommand.updateUser(userDto)
+                .map(User::toDto)
+                .orElseThrow(() -> new ServiceException(ErrorCode.S000, "User not updated")), HttpStatus.OK);    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('backend_service')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         log.info("Processing `deleteUser` request in UserControllerV1, id: {}", id);
 
-        this.userServiceCommand.deleteUser(id);
+        this.userServiceCommand.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

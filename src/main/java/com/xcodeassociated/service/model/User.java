@@ -1,5 +1,6 @@
 package com.xcodeassociated.service.model;
 
+import com.xcodeassociated.service.controller.rest.keycloak.dto.UserRepresentationDto;
 import com.xcodeassociated.service.model.dto.UserDto;
 import com.xcodeassociated.service.model.dto.UserFullDto;
 import com.xcodeassociated.service.model.helpers.CollectionsByValueComparator;
@@ -12,6 +13,7 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Audited(withModifiedFlag = true)
 @ToString(callSuper = true)
-@Table(name = "user",
+@Table(name = "users",
     indexes = {
         @Index(name = "AUTH_ID_INDEX", columnList = "auth_id"),
         @Index(name = "USERNAME_INDEX", columnList = "username")
@@ -109,4 +111,58 @@ public class User extends ComparableBaseEntity<User> {
                         .collect(Collectors.toSet()))
                 .build();
     }
+
+    public boolean addHistoryEvent(History event) {
+        if (!CollectionsByValueComparator.isElementInCollection(event, this.history)) {
+            this.history.add(event);
+            return true;
+        }
+        return false;
+    }
+
+    public User update(UserRepresentationDto dto) {
+        this.username = dto.getUsername();
+        this.firstName = dto.getFirstName();
+        this.lastName = dto.getLastName();
+        this.enabled = dto.getEnabled();
+
+        Optional<Contact> contact = Optional.ofNullable(dto.getEmail())
+                .map(e -> new Contact().toBuilder()
+                        .email(e)
+                        .verified(dto.getEmailVerified())
+                        .user(this)
+                        .build());
+
+        contact.ifPresent(e -> {
+            if (!CollectionsByValueComparator.isElementInCollection(e, this.contacts)) {
+                this.contacts.add(e);
+            }
+        });
+
+        return this;
+    }
+
+    public static User fromUserRepresentation(UserRepresentationDto dto) {
+        User user = new User().toBuilder()
+                .authId(dto.getId())
+                .createdTimestamp(dto.getCreatedTimestamp())
+                .username(dto.getUsername())
+                .enabled(dto.getEnabled())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .contacts(new HashSet<>())
+                .history(new HashSet<>())
+                .build();
+
+        Optional<Contact> contact = Optional.ofNullable(dto.getEmail())
+                .map(e -> new Contact().toBuilder()
+                        .email(e)
+                        .verified(dto.getEmailVerified())
+                        .user(user)
+                        .build());
+
+        contact.ifPresent(e -> user.getContacts().add(e));
+        return user;
+    }
+
 }

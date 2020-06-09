@@ -22,13 +22,13 @@ import java.util.Optional;
 public class UserEventService implements UserEventServiceInterface, UserEventHandler {
 
     private final UserEventConverter eventConverter;
-    private final KeycloakApi keycloakApi;
     private final UserService userService;
+    private final KeycloakApi keycloakApi;
 
-    public UserEventService(KeycloakApi keycloakApi, UserService userService) {
-        this.keycloakApi = keycloakApi;
+    public UserEventService(UserService userService, KeycloakApi keycloakApi) {
         this.userService = userService;
         this.eventConverter = new UserEventConverter(this);
+        this.keycloakApi = keycloakApi;
     }
 
     @Override
@@ -66,13 +66,15 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
     @Override
     public void handleLogin(Login event) {
         log.info("Handling LOGIN: {}", event);
-        // ...
+        this.userService.registerUserLogin(event)
+                .ifPresent(e -> log.info("Event processing finished"));
     }
 
     @Override
     public void handleLogout(Logout event) {
         log.info("Handling LOGOUT: {}", event);
-        // ...
+        this.userService.registerUserLogout(event)
+                .ifPresent(e -> log.info("Event processing finished"));
     }
 
     @Override
@@ -80,7 +82,13 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
         log.info("Handling REGISTER: {}", event);
 
         Optional<UserRepresentationDto> userRepresentation = this.fetchUserRepresentation(event.getUserId());
-        userRepresentation.ifPresent(userRepresentationDto -> log.info("Received user representation: {}", userRepresentationDto));
+        userRepresentation.ifPresentOrElse(userRepresentationDto -> {
+            log.info("Received user representation: {}", userRepresentationDto);
+            this.userService.createUser(userRepresentationDto)
+                    .ifPresent(e -> log.info("Event processing finished"));
+        }, () -> {
+            log.error("Could not fetch user representation");
+        });
     }
 
     @Override
@@ -88,13 +96,20 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
         log.info("Handling UPDATE: {}", event);
 
         Optional<UserRepresentationDto> userRepresentation = this.fetchUserRepresentation(event.getUserId());
-        userRepresentation.ifPresent(userRepresentationDto -> log.info("Received user representation: {}", userRepresentationDto));
+        userRepresentation.ifPresentOrElse(userRepresentationDto -> {
+            log.info("Received user representation: {}", userRepresentationDto);
+            this.userService.updateUser(userRepresentationDto)
+                    .ifPresent(e -> log.info("Event processing finished"));
+        }, () -> {
+            log.error("Could not fetch user representation");
+        });
     }
 
     @Override
     public void handleDelete(Delete event) {
         log.info("Handling DELETE: {}", event);
 
+        this.userService.deleteUser(event);
     }
 
     private Optional<UserRepresentationDto> fetchUserRepresentation(String userId) {

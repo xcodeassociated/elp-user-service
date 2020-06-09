@@ -33,6 +33,7 @@ public class History extends ComparableBaseEntity<History> {
     @Column(name = "timestamp", nullable = false)
     private Long timestamp;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -53,6 +54,14 @@ public class History extends ComparableBaseEntity<History> {
                 .modifiedDate(getModifiedDate())
                 .event(this.event)
                 .timestamp(this.timestamp)
+                .build();
+    }
+
+    public static History create(EventType eventType, Long timestamp, User user) {
+        return new History().toBuilder()
+                .event(eventType)
+                .timestamp(timestamp)
+                .user(user)
                 .build();
     }
 }

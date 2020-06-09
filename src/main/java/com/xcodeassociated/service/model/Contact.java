@@ -33,6 +33,7 @@ public class Contact extends ComparableBaseEntity<Contact> {
     @Column(name = "verified", nullable = false)
     private Boolean verified;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

@@ -2,16 +2,23 @@ package com.xcodeassociated.service.service.implementation;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.xcodeassociated.service.controller.rest.keycloak.dto.UserRepresentationDto;
 import com.xcodeassociated.service.exception.ObjectNotFoundException;
 import com.xcodeassociated.service.exception.ServiceException;
 import com.xcodeassociated.service.exception.codes.ErrorCode;
 import com.xcodeassociated.service.model.Contact;
+import com.xcodeassociated.service.model.EventType;
+import com.xcodeassociated.service.model.History;
 import com.xcodeassociated.service.model.User;
 import com.xcodeassociated.service.model.dto.ContactDto;
 import com.xcodeassociated.service.model.dto.UserDto;
+import com.xcodeassociated.service.model.dto.UserFullDto;
 import com.xcodeassociated.service.repository.UserRepository;
 import com.xcodeassociated.service.service.UserServiceCommand;
 import com.xcodeassociated.service.service.UserServiceQuery;
+import com.xcodeassociated.service.service.implementation.transition.Delete;
+import com.xcodeassociated.service.service.implementation.transition.Login;
+import com.xcodeassociated.service.service.implementation.transition.Logout;
 import com.xcodeassociated.service.service.query.UserByEmailQuery;
 import com.xcodeassociated.service.service.query.UserByNullablePropertiesQuery;
 import lombok.AllArgsConstructor;
@@ -22,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,21 +46,35 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
     public Page<UserDto> getAllUsers(Pageable pageable) {
         log.info("Getting all users pageable: {}", pageable);
 
-        return this.userRepository
-                .findAll(pageable)
+        return this.userRepository.findAll(pageable)
                 .map(User::toDto);
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        Optional<User> user = this.userRepository.findUserById(id);
-        if (user.isPresent()) {
-            log.info("Found user: {}", user.get());
-            return user.get().toDto();
-        } else {
-            log.warn("User not found, id: {}", id);
-            throw new ObjectNotFoundException(ErrorCode.E001, id);
-        }
+        log.info("Getting user by id: {}", id);
+
+        return this.userRepository.findUserById(id)
+                .map(User::toDto)
+                .orElseThrow(() -> new ObjectNotFoundException(ErrorCode.E001, id));
+    }
+
+    @Override
+    public UserFullDto getFullUserById(Long id) {
+        log.info("Getting full user by id: {}", id);
+
+        return this.userRepository.findUserById(id)
+                .map(User::toFullDto)
+                .orElseThrow(() -> new ObjectNotFoundException(ErrorCode.E001, id));
+    }
+
+    @Override
+    public UserDto getUserByAuthId(String id) {
+        log.info("Getting user by auth id: {}", id);
+
+        return this.userRepository.findUserByAuthId(id)
+                .map(User::toDto)
+                .orElseThrow(() -> new ObjectNotFoundException(ErrorCode.E004, id));
     }
 
     @Override
@@ -102,58 +124,94 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        log.info("Creating user with dto: {}", userDto);
+    public Optional<User> createUser(UserRepresentationDto userRepresentationDto) {
+        log.info("Creating user based on representation");
 
-        final User user = new User()
-                .toBuilder()
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .contacts(this.userEmailsDtoToEmails(userDto))
-                .build();
+        User user = User.fromUserRepresentation(userRepresentationDto);
+        this.addUserHistoryEvent(user, History.create(EventType.REGISTER, userRepresentationDto.getCreatedTimestamp(), user));
 
-        user.getContacts()
-                .forEach(e -> e.setUser(user));
-
-        return this.userRepository
-                .save(user)
-                .toDto();
+        log.info("Created User: {}", user);
+        return Optional.of(this.userRepository.save(user));
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        log.info("Updating user with dto: {}", userDto);
+    public Optional<User> updateUser(UserRepresentationDto userRepresentationDto) {
+        log.info("Updating user based on representation");
 
-        Optional<User> user = this.userRepository.findUserById(userDto.getId());
-        if (user.isPresent()) {
-            log.info("User found: {}", user.get());
+        Optional<User> user = this.userRepository.findUserByAuthId(userRepresentationDto.getId());
+        user.ifPresentOrElse(e -> {
+            log.info("Running update for user: {}", e);
+            e.update(userRepresentationDto);
+            this.addUserHistoryEvent(e, History.create(EventType.UPDATE, Instant.now().toEpochMilli(), e));
+        }, () -> {
+            throw new ServiceException(ErrorCode.E004, "Could not find user by auth id: {} for update", userRepresentationDto.getId());
+        });
 
-            // user data:
-            User foundUser = user.get();
-            foundUser.setFirstName(userDto.getFirstName());
-            foundUser.setLastName(userDto.getLastName());
-            // user -> contacts
-            Set<Contact> contacts = foundUser.getContacts();
-            contacts.addAll(this.userEmailsDtoToEmails(userDto));
-            foundUser.setContacts(contacts);
-            // each contact -> user
-            foundUser.getContacts()
-                    .forEach(e -> e.setUser(foundUser));
+        return user;
+    }
 
-            return this.userRepository
-                    .save(foundUser)
-                    .toDto();
+    @Override
+    public Optional<User> registerUserLogin(Login event) {
+        log.info("Registering user login for id: {}", event.getUserId());
+
+        Optional<User> user = this.userRepository.findUserByAuthId(event.getUserId());
+        user.ifPresentOrElse(e -> {
+            log.info("Registering update for user: {}", e);
+            this.addUserHistoryEvent(e, History.create(EventType.LOGIN, event.getTime(), e));
+        }, () -> {
+            throw new ServiceException(ErrorCode.E004, "Could not find user by auth id: {} for event register", event.getUserId());
+        });
+
+        return user;
+    }
+
+    @Override
+    public Optional<User> registerUserLogout(Logout event) {
+        log.info("Registering user logout for id: {}", event.getUserId());
+
+        Optional<User> user = this.userRepository.findUserByAuthId(event.getUserId());
+        user.ifPresentOrElse(e -> {
+            log.info("Registering update for user: {}", e);
+            this.addUserHistoryEvent(e, History.create(EventType.LOGOUT, event.getTime(), e));
+        }, () -> {
+            throw new ServiceException(ErrorCode.E004, "Could not find user by auth id: {} for event register", event.getUserId());
+        });
+
+        return user;
+    }
+
+
+    @Override
+    public void deleteUserById(Long id) {
+        log.info("Deleting user by id: {}", id);
+
+        if (this.userRepository.existsById(id)) {
+            this.userRepository.deleteById(id);
         } else {
-            log.warn("User by dto: {} not found", userDto);
-            throw new ObjectNotFoundException(ErrorCode.E001, userDto.getId());
+            log.error("User with id: {} does not exist", id);
+            throw new ServiceException(ErrorCode.E001, "Could not delete user");
         }
     }
 
     @Override
-    public void deleteUser(Long id) {
-        log.info("Deleting user by id: {}", id);
+    public void deleteUser(Delete event) {
+        String authID = event.getUserId();
+        log.info("Deleting user by auth id: {}", authID);
 
-        this.userRepository.deleteById(id);
+        if (this.userRepository.existsByAuthId(authID)) {
+            this.userRepository.deleteUserByAuthId(authID);
+        } else {
+            log.error("User with auth id: {} does not exist", authID);
+            throw new ServiceException(ErrorCode.E004, "Could not delete user");
+        }
+    }
+
+    private void addUserHistoryEvent(User user, History event) {
+        if (user.addHistoryEvent(event)) {
+            log.info("History event added");
+        } else {
+            log.warn("History event was not added, event already present");
+        }
     }
 
     @NotNull

@@ -10,8 +10,13 @@ import java.util.Optional;
 public interface UserRepository extends BaseRepository<User, Long> {
 
     Optional<User> findUserById(Long id);
+    Optional<User> findUserByAuthId(String authId);
 
     @NotNull
     Page<User> findAll(@NotNull Pageable pageable);
 
+    boolean existsById(Long id);
+    boolean existsByAuthId(String authId);
+
+    void deleteUserByAuthId(String authId);
 }

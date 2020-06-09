@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1591643400686-1
+      id: 1591741005992-1
       author: hamashy (generated)
       changes:
         - createSequence:
@@ -8,7 +8,7 @@ databaseChangeLog:
             sequenceName: hibernate_sequence
             startValue: 1
   - changeSet:
-      id: 1591643400686-2
+      id: 1591741005992-2
       author: hamashy (generated)
       changes:
         - createTable:
@@ -55,7 +55,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: contact
   - changeSet:
-      id: 1591643400686-3
+      id: 1591741005992-3
       author: hamashy (generated)
       changes:
         - createTable:
@@ -127,7 +127,126 @@ databaseChangeLog:
                   type: BOOLEAN
             tableName: contact_aud
   - changeSet:
-      id: 1591643400686-4
+      id: 1591741005992-4
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: historyPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: event
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: timestamp
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+            tableName: history
+  - changeSet:
+      id: 1591741005992-5
+      author: hamashy (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: history_audPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: history_audPK
+                  name: rev
+                  type: INTEGER
+              - column:
+                  name: revtype
+                  type: SMALLINT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: created_date
+                  type: BIGINT
+              - column:
+                  name: created_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by_mod
+                  type: BOOLEAN
+              - column:
+                  name: modified_date
+                  type: BIGINT
+              - column:
+                  name: modified_date_mod
+                  type: BOOLEAN
+              - column:
+                  name: uuid
+                  type: VARCHAR(255)
+              - column:
+                  name: uuid_mod
+                  type: BOOLEAN
+              - column:
+                  name: event
+                  type: VARCHAR(255)
+              - column:
+                  name: event_mod
+                  type: BOOLEAN
+              - column:
+                  name: timestamp
+                  type: BIGINT
+              - column:
+                  name: timestamp_mod
+                  type: BOOLEAN
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: user_mod
+                  type: BOOLEAN
+            tableName: history_aud
+  - changeSet:
+      id: 1591741005992-6
       author: hamashy (generated)
       changes:
         - createTable:
@@ -150,7 +269,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: rev_entity
   - changeSet:
-      id: 1591643400686-5
+      id: 1591741005992-7
       author: hamashy (generated)
       changes:
         - createTable:
@@ -160,7 +279,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: userPK
+                    primaryKeyName: usersPK
                   name: id
                   type: BIGINT
               - column:
@@ -204,9 +323,9 @@ databaseChangeLog:
                     nullable: false
                   name: username
                   type: VARCHAR(255)
-            tableName: user
+            tableName: users
   - changeSet:
-      id: 1591643400686-6
+      id: 1591741005992-8
       author: hamashy (generated)
       changes:
         - createTable:
@@ -215,14 +334,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: user_audPK
+                    primaryKeyName: users_audPK
                   name: id
                   type: BIGINT
               - column:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: user_audPK
+                    primaryKeyName: users_audPK
                   name: rev
                   type: INTEGER
               - column:
@@ -297,9 +416,12 @@ databaseChangeLog:
               - column:
                   name: contacts_mod
                   type: BOOLEAN
-            tableName: user_aud
+              - column:
+                  name: history_mod
+                  type: BOOLEAN
+            tableName: users_aud
   - changeSet:
-      id: 1591643400686-7
+      id: 1591741005992-9
       author: hamashy (generated)
       changes:
         - addUniqueConstraint:
@@ -307,15 +429,25 @@ databaseChangeLog:
             constraintName: UC_CONTACTEMAIL_COL
             tableName: contact
   - changeSet:
-      id: 1591643400686-8
+      id: 1591741005992-10
       author: hamashy (generated)
       changes:
         - addUniqueConstraint:
             columnNames: auth_id
-            constraintName: UC_USERAUTH_ID_COL
-            tableName: user
+            constraintName: UC_USERSAUTH_ID_COL
+            tableName: users
   - changeSet:
-      id: 1591643400686-9
+      id: 1591741005992-11
+      author: hamashy (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: event
+            indexName: EVENT_TYPE_INDEX
+            tableName: history
+  - changeSet:
+      id: 1591741005992-12
       author: hamashy (generated)
       changes:
         - createIndex:
@@ -323,9 +455,19 @@ databaseChangeLog:
               - column:
                   name: username
             indexName: USERNAME_INDEX
-            tableName: user
+            tableName: users
   - changeSet:
-      id: 1591643400686-10
+      id: 1591741005992-13
+      author: hamashy (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: user_id
+            indexName: USER_HISTORY_ID_INDEX
+            tableName: history
+  - changeSet:
+      id: 1591741005992-14
       author: hamashy (generated)
       changes:
         - createIndex:
@@ -335,33 +477,59 @@ databaseChangeLog:
             indexName: USER_ID_INDEX
             tableName: contact
   - changeSet:
-      id: 1591643400686-11
+      id: 1591741005992-15
       author: hamashy (generated)
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: user_id
             baseTableName: contact
-            constraintName: FKe07k4jcfdophemi6j1lt84b61
+            constraintName: FKbxl6anxo14q097g8cd2e51v55
             deferrable: false
             initiallyDeferred: false
             referencedColumnNames: id
-            referencedTableName: user
+            referencedTableName: users
             validate: true
   - changeSet:
-      id: 1591643400686-12
+      id: 1591741005992-16
       author: hamashy (generated)
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: rev
-            baseTableName: user_aud
-            constraintName: FKn4bly3wenp6tb3f46qa8odcxp
+            baseTableName: history_aud
+            constraintName: FKlf3jtta7ld38y4yevrrieqxxm
             deferrable: false
             initiallyDeferred: false
             referencedColumnNames: id
             referencedTableName: rev_entity
             validate: true
   - changeSet:
-      id: 1591643400686-13
+      id: 1591741005992-17
+      author: hamashy (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: history
+            constraintName: FKq4kh99ws9lhtls5i3o73gw30t
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: users
+            validate: true
+  - changeSet:
+      id: 1591741005992-18
+      author: hamashy (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: rev
+            baseTableName: users_aud
+            constraintName: FKrj8nsweyxp8welouj8r43ijwr
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: rev_entity
+            validate: true
+  - changeSet:
+      id: 1591741005992-19
       author: hamashy (generated)
       changes:
         - addForeignKeyConstraint:
