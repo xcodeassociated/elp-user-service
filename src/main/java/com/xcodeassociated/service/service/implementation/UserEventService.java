@@ -66,6 +66,7 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
     @Override
     public void handleLogin(Login event) {
         log.info("Handling LOGIN: {}", event);
+
         this.userService.registerUserLogin(event)
                 .ifPresent(e -> log.info("Event processing finished"));
     }
@@ -73,6 +74,7 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
     @Override
     public void handleLogout(Logout event) {
         log.info("Handling LOGOUT: {}", event);
+
         this.userService.registerUserLogout(event)
                 .ifPresent(e -> log.info("Event processing finished"));
     }
@@ -110,6 +112,7 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
         log.info("Handling DELETE: {}", event);
 
         this.userService.deleteUser(event);
+        log.info("Event processing finished");
     }
 
     private Optional<UserRepresentationDto> fetchUserRepresentation(String userId) {
