@@ -140,7 +140,7 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
 
         Optional<User> user = this.userRepository.findUserByAuthId(userRepresentationDto.getId());
         user.ifPresentOrElse(e -> {
-            log.info("Running update for user: {}", e);
+            log.info("Running update for user authId: {}", e.getAuthId());
             e.update(userRepresentationDto);
             this.addUserHistoryEvent(e, History.create(EventType.UPDATE, Instant.now().toEpochMilli(), e));
         }, () -> {
@@ -156,7 +156,7 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
 
         Optional<User> user = this.userRepository.findUserByAuthId(event.getUserId());
         user.ifPresentOrElse(e -> {
-            log.info("Registering update for user: {}", e);
+            log.info("Registering login for user authId: {}", e.getAuthId());
             this.addUserHistoryEvent(e, History.create(EventType.LOGIN, event.getTime(), e));
         }, () -> {
             throw new ServiceException(ErrorCode.E004, "Could not find user by auth id: {} for event register", event.getUserId());
@@ -171,7 +171,7 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
 
         Optional<User> user = this.userRepository.findUserByAuthId(event.getUserId());
         user.ifPresentOrElse(e -> {
-            log.info("Registering update for user: {}", e);
+            log.info("Registering logout for user authId: {}", e.getAuthId());
             this.addUserHistoryEvent(e, History.create(EventType.LOGOUT, event.getTime(), e));
         }, () -> {
             throw new ServiceException(ErrorCode.E004, "Could not find user by auth id: {} for event register", event.getUserId());

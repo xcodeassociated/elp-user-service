@@ -52,11 +52,11 @@ public class User extends ComparableBaseEntity<User> {
     private Boolean enabled;
 
     @BatchSize(size = 10)
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private Set<Contact> contacts = new HashSet<>();
 
     @BatchSize(size = 10)
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private Set<History> history = new HashSet<>();
 
     @Override
