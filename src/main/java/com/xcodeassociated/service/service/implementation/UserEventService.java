@@ -9,6 +9,8 @@ import com.xcodeassociated.service.controller.kafka.dto.KeycloakAdminEvent;
 import com.xcodeassociated.service.controller.kafka.dto.KeycloakEvent;
 import com.xcodeassociated.service.controller.rest.keycloak.KeycloakApi;
 import com.xcodeassociated.service.controller.rest.keycloak.dto.UserRepresentationDto;
+import com.xcodeassociated.service.exception.ServiceException;
+import com.xcodeassociated.service.exception.codes.ErrorCode;
 import com.xcodeassociated.service.service.UserEventServiceInterface;
 import com.xcodeassociated.service.service.implementation.transition.*;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +92,7 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
                     .ifPresent(e -> log.info("Event processing finished"));
         }, () -> {
             log.error("Could not fetch user representation");
+            throw new ServiceException(ErrorCode.A000, "Could not fetch keycloak api");
         });
     }
 
@@ -104,6 +107,7 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
                     .ifPresent(e -> log.info("Event processing finished"));
         }, () -> {
             log.error("Could not fetch user representation");
+            throw new ServiceException(ErrorCode.A000, "Could not fetch keycloak api");
         });
     }
 

@@ -15,7 +15,9 @@ public enum ErrorCode {
     // kafka:
     K000("Kafka exception: %s"),
     // validation:
-    V000("Validation exception: %s");
+    V000("Validation exception: %s"),
+    // keycloak api:
+    A000("Could not fetch data from keycloak api: %s");
 
     private final String message;
 
