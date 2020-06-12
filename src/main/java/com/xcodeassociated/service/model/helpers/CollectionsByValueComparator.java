@@ -1,5 +1,7 @@
 package com.xcodeassociated.service.model.helpers;
 
+import com.xcodeassociated.service.exception.ServiceException;
+import com.xcodeassociated.service.exception.codes.ErrorCode;
 import com.xcodeassociated.service.model.ComparableBaseEntity;
 
 import java.util.Collection;
@@ -7,6 +9,10 @@ import java.util.stream.Collectors;
 
 
 public class CollectionsByValueComparator {
+    private CollectionsByValueComparator() {
+        throw new ServiceException(ErrorCode.S000, "CollectionsByValueComparator should not be instantiated");
+    }
+
     public static <T extends ComparableBaseEntity> boolean areCollectionsSame(Collection<T> left, Collection<T> right) {
         return left.size() == right.size()
                 && right.size() == left.stream()
