@@ -115,7 +115,8 @@ public class UserService implements UserServiceQuery, UserServiceCommand {
             return this.userRepository.findOne(predicate.get())
                     .orElseThrow(() -> {
                         log.warn("User by firstName: {} || lastName: {} || email: {} not found", firstName, lastName, email);
-                        throw new ObjectNotFoundException(ErrorCode.E003, "User with email", email, " not found!");
+                        throw new ObjectNotFoundException(ErrorCode.E005,
+                                "User with: {firstName: " + firstName + ", lastName: " + lastName + ", email: " + email + "} not found!");
                     })
                     .toDto();
         } else {

@@ -17,10 +17,8 @@ public class UserByEmailQuery {
 
     public Predicate toPredicate() {
         QUser q = QUser.user;
-        Predicate expression = new BooleanBuilder()
+        return new BooleanBuilder()
                 .and(q.contacts.any().email.eq(emailQuery))
                 .getValue();
-
-        return expression;
     }
 }

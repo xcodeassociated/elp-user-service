@@ -10,6 +10,7 @@ public enum ErrorCode {
     E002("Error: %s"),
     E003("User not found by email: %s"),
     E004("User not found by auth id: %s"),
+    E005("User not found: %s"),
     // service:
     S000("Service exception: %s"),
     // kafka:

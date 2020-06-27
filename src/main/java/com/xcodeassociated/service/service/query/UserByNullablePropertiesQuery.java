@@ -27,20 +27,20 @@ public class UserByNullablePropertiesQuery {
             return Stream.of(
                     Optional.ofNullable(firstName)
                             .filter(StringUtils::isNotBlank)
-                            .map(q.firstName::eq)
-                            .orElse(Expressions.asBoolean(true).isTrue()),
+                            .map(q.firstName::eq),
                     Optional.ofNullable(lastName)
                             .filter(StringUtils::isNotBlank)
-                            .map(q.lastName::eq)
-                            .orElse(Expressions.asBoolean(true).isTrue()),
+                            .map(q.lastName::eq),
                     Stream.of(
                             Optional.ofNullable(email)
                                     .filter(StringUtils::isNotBlank)
                                     .map(p -> q.contacts.any().email.equalsIgnoreCase(p))
-                                    .orElse(Expressions.asBoolean(true).isTrue())
-
-                    ).reduce(BooleanExpression::or).get()
-            ).reduce(BooleanExpression::and);
+                    ).filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .reduce(BooleanExpression::or)
+            ).filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .reduce(BooleanExpression::and);
         } else {
             return Optional.empty();
         }
