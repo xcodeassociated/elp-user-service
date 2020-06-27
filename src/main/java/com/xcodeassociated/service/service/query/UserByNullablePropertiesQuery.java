@@ -25,26 +25,21 @@ public class UserByNullablePropertiesQuery {
         if (StringUtils.isNotBlank(firstName) || StringUtils.isNotBlank(lastName) || StringUtils.isNotBlank(email)) {
             QUser q = QUser.user;
             return Stream.of(
-                    // AND
                     Optional.ofNullable(firstName)
                             .filter(StringUtils::isNotBlank)
                             .map(q.firstName::eq)
                             .orElse(Expressions.asBoolean(true).isTrue()),
-                    // AND
                     Optional.ofNullable(lastName)
                             .filter(StringUtils::isNotBlank)
                             .map(q.lastName::eq)
                             .orElse(Expressions.asBoolean(true).isTrue()),
-                    // AND
                     Stream.of(
                             Optional.ofNullable(email)
                                     .filter(StringUtils::isNotBlank)
                                     .map(p -> q.contacts.any().email.equalsIgnoreCase(p))
                                     .orElse(Expressions.asBoolean(true).isTrue())
-                            // OR
-                            // ...
+
                     ).reduce(BooleanExpression::or).get()
-                    // ...
             ).reduce(BooleanExpression::and);
         } else {
             return Optional.empty();

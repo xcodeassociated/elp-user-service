@@ -1,11 +1,9 @@
 package com.xcodeassociated.service.controller.kafka.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

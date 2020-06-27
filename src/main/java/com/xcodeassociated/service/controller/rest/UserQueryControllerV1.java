@@ -4,13 +4,8 @@ import com.xcodeassociated.commons.paging.CustomPageRequest;
 import com.xcodeassociated.commons.paging.JsonViewAwarePage;
 import com.xcodeassociated.commons.paging.SortDirection;
 import com.xcodeassociated.service.controller.rest.dto.UserSearchDto;
-import com.xcodeassociated.service.controller.rest.keycloak.dto.UserRepresentationDto;
-import com.xcodeassociated.service.exception.ServiceException;
-import com.xcodeassociated.service.exception.codes.ErrorCode;
-import com.xcodeassociated.service.model.User;
 import com.xcodeassociated.service.model.dto.UserDto;
 import com.xcodeassociated.service.model.dto.UserFullDto;
-import com.xcodeassociated.service.service.UserServiceCommand;
 import com.xcodeassociated.service.service.UserServiceQuery;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/user/api/v1/users")
-public class UserControllerV1 {
+public class UserQueryControllerV1 {
 
     private final UserServiceQuery userServiceQuery;
-    private final UserServiceCommand userServiceCommand;
 
     @GetMapping("/paged")
     @PreAuthorize("hasRole('backend_service')")
@@ -84,31 +78,4 @@ public class UserControllerV1 {
                 (dto.getFirstName(), dto.getLastName(), dto.getEmail()), HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('backend_service')")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserRepresentationDto userDto) {
-        log.info("Processing `createUser` request in UserControllerV1, userDto: {}", userDto);
-
-        return new ResponseEntity<>(this.userServiceCommand.createUser(userDto)
-                .map(User::toDto)
-                .orElseThrow(() -> new ServiceException(ErrorCode.S000, "User not created")), HttpStatus.OK);
-    }
-
-    @PutMapping("/update")
-    @PreAuthorize("hasRole('backend_service')")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserRepresentationDto userDto) {
-        log.info("Processing `updateUser` request in UserControllerV1, userDto: {}", userDto);
-
-        return new ResponseEntity<>(this.userServiceCommand.updateUser(userDto)
-                .map(User::toDto)
-                .orElseThrow(() -> new ServiceException(ErrorCode.S000, "User not updated")), HttpStatus.OK);    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('backend_service')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        log.info("Processing `deleteUser` request in UserControllerV1, id: {}", id);
-
-        this.userServiceCommand.deleteUserById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

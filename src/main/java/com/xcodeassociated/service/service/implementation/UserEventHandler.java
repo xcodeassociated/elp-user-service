@@ -1,10 +1,6 @@
 package com.xcodeassociated.service.service.implementation;
 
-import com.xcodeassociated.service.service.implementation.transition.Login;
-import com.xcodeassociated.service.service.implementation.transition.Logout;
-import com.xcodeassociated.service.service.implementation.transition.Register;
-import com.xcodeassociated.service.service.implementation.transition.Update;
-import com.xcodeassociated.service.service.implementation.transition.Delete;
+import com.xcodeassociated.service.service.implementation.transition.*;
 
 public interface UserEventHandler {
     void handleLogin(Login event);
