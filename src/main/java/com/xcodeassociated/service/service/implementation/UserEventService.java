@@ -23,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class UserEventService implements UserEventServiceInterface, UserEventHandler {
 
+    private static final int KEYCLOAK_FETCH_DELAY_MS = 1000;
+
     private final UserEventConverter eventConverter;
     private final UserService userService;
     private final KeycloakApi keycloakApi;
@@ -121,9 +123,17 @@ public class UserEventService implements UserEventServiceInterface, UserEventHan
 
     private Optional<UserRepresentationDto> fetchUserRepresentation(String userId) {
         try {
+            // note: work-around keycloak lag when user updated the representation may not be up-to-date right away
+            log.info("Thread enters {}ms sleep to prevent dirty representation fetch", KEYCLOAK_FETCH_DELAY_MS);
+            Thread.sleep(KEYCLOAK_FETCH_DELAY_MS);
+            log.info("Thread resumes after {}ms sleep", KEYCLOAK_FETCH_DELAY_MS);
+
             return Optional.ofNullable(this.keycloakApi.getUserRepresentation(userId).execute().body());
         } catch (IOException exception) {
             log.error("Could not get user representation with error: {}", exception.getMessage());
+            return Optional.empty();
+        } catch (InterruptedException exception) {
+            log.error("InterruptedException: {}", exception.getMessage());
             return Optional.empty();
         }
     }
