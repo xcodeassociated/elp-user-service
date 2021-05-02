@@ -15,16 +15,40 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @Component
 @Slf4j
 class ServiceApplicationRunner implements CommandLineRunner {
 
+	Environment env;
+
+	public ServiceApplicationRunner(Environment env) {
+		this.env = env;
+	}
+
 	@Override
 	public void run(String... args) {
 		log.info("ServiceApplicationRunner::run with: {}", args);
+
+		Map<String, Object> map = new HashMap();
+		for(Iterator it = ((AbstractEnvironment) env).getPropertySources().iterator(); it.hasNext(); ) {
+			PropertySource propertySource = (PropertySource) it.next();
+			if (propertySource instanceof MapPropertySource) {
+				map.putAll(((MapPropertySource) propertySource).getSource());
+			}
+		}
+
+		log.info(">>> env: {}", map);
 	}
 
 }

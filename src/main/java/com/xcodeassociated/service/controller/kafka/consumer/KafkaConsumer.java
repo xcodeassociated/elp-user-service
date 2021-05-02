@@ -33,8 +33,8 @@ public class KafkaConsumer implements KafkaConsumerInterface {
 
     @Override
     @KafkaListener(
-            id = "dev-keycloak-customer-group",
-            topics = {"keycloak-events", "keycloak-admin-events"},
+            id = "${kafka.keycloak.consumer-group-id}",
+            topics = {"${kafka.keycloak.event.topic}", "${kafka.keycloak.admin.topic}"},
             containerFactory = "keycloakListenerContainerFactory",
             errorHandler = "validationErrorHandler"
     )
